@@ -1,4 +1,10 @@
-package ex01.pyrmont;
+
+/*
+* the following base implementation was modifed:
+• http://www.onjava.com/pub/a/onjava/2003/04/23/java_webserver.html
+* */
+
+package webserver;
 
 import java.net.Socket;
 import java.net.ServerSocket;

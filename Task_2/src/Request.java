@@ -1,4 +1,9 @@
-package ex01.pyrmont;
+/*
+* the following base implementation was used:
+• http://www.onjava.com/pub/a/onjava/2003/04/23/java_webserver.html
+* */
+
+package webserver;
 
 import java.io.InputStream;
 import java.io.IOException;

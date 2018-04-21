@@ -1,4 +1,4 @@
-package ex01.pyrmont;
+package webserver;
 
 import java.io.OutputStream;
 import java.io.IOException;
