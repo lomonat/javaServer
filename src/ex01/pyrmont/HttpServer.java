@@ -6,22 +6,12 @@ import java.net.InetAddress;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
-import java.io.File;
-import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 
 public class HttpServer {
 
-  /** WEB_ROOT is the directory where our HTML and other files reside.
-   *  For this package, WEB_ROOT is the "webroot" directory under the working
-   *  directory.
-   *  The working directory is the location in the file system
-   *  from where the java command was invoked.
-   */
-  public static final String WEB_ROOT =
-    System.getProperty("user.dir") + File.separator  + "webroot";
 
   // shutdown command
   private static final String SHUTDOWN_COMMAND = "/SHUTDOWN";
@@ -39,9 +29,8 @@ public class HttpServer {
   public void await(int portN) {
       //initialize the instance of socket and the port, define instance of class ServerSocket
     ServerSocket serverSocket = null;
-    int port = portN;
     try {
-      serverSocket =  new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"));
+      serverSocket =  new ServerSocket(portN, 1, InetAddress.getByName("127.0.0.1"));
     }
     catch (IOException e) {
       e.printStackTrace();

@@ -2,22 +2,10 @@ package ex01.pyrmont;
 
 import java.io.OutputStream;
 import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.File;
-import java.net.*;
-
-
-/*
-  HTTP Response = Status-Line
-    *(( general-header | response-header | entity-header ) CRLF)
-    CRLF
-    [ message-body ]
-    Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
-*/
+import java.net.InetAddress;
 
 public class Response {
 
-  private static final int BUFFER_SIZE = 1024;
   Request request;
   OutputStream output;
 
@@ -31,22 +19,31 @@ public class Response {
     this.request = request;
   }
 
+  //public String content (header, )
+
   public void sendStaticResource() throws IOException {
-  //  byte[] bytes = new byte[BUFFER_SIZE];
-    FileInputStream fis = null;
+
     try {
 
       if(request.getUri().equals("/")) {
         System.out.println("Hello world!");
+        String msg  = "HTTP/1.0 200 OK\r\n" +
+                "Content-Type: text/html\r\n" +
+              //  "Content-Length: 20\r\n" +
+                "Content-Length: 20\r\n" +
+                "\r\n" +
+                "<h1>Hello world</h1>";
+        output.write(msg.getBytes());
+        output.flush();
 
       } else if(request.getUri().equals("/s")) {
         InetAddress thisIp = InetAddress.getLocalHost();
         System.out.println("IP:"+thisIp.getHostAddress());
-        String msg  = "HTTP/1.1 200 OK\r\n" +
+        String msg  = "HTTP/1.0 200 OK\r\n" +
                 "Content-Type: text/html\r\n" +
-                "Content-Length: 23\r\n" +
+                "Content-Length: 29\r\n" +
                 "\r\n" +
-                "<h1>Page Found</h1>";
+                "<h1>Your IP is</h1>" + thisIp.getHostAddress();
         output.write(msg.getBytes());
         output.flush();
 
@@ -64,7 +61,6 @@ public class Response {
       }
     }
     catch (Exception e) {
-      // thrown if cannot instantiate a File object
       System.out.println(e.toString() );
     }
   }
