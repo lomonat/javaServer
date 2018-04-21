@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Hashtable;
 
 
 public class Response {
@@ -12,8 +13,8 @@ public class Response {
   Request request;
   OutputStream output;
 
-  private static List<String> ips = new ArrayList<String>();
-
+  static Hashtable<String, Integer> hashtable =
+          new Hashtable<String, Integer>();
 
   public Response(OutputStream output) {
 
@@ -24,7 +25,6 @@ public class Response {
 
     this.request = request;
   }
-
 
   public String getIp() {
     InetAddress thisIp = null;
@@ -57,17 +57,25 @@ public class Response {
   public void sendStaticResource() throws IOException {
 
     try {
+
       // 192.168.1.2 is in "blacklist" - will get always Page not found
+
       if (!getIp().equals("192.168.1.2")) {
 
         if(request.getUri().equals("/")) {
 
           //check if uniq, choose appropriate message, store if uniq
-          if (!ips.contains(getIp())) {
+
+          if (!hashtable.containsKey(getIp())) {
             content("200 OK", 20, "Hello world");
-            ips.add (getIp());
+            hashtable.put(getIp(), 1);
+            System.out.println(hashtable.get(getIp()));
           } else {
-            content("200 OK", 43, "You have visited this page before!");
+
+            // change message every time,
+            // if the request from current ip was made before
+            hashtable.put(getIp(), hashtable.get(getIp()) + 1);
+            content("200 OK", 43, "You are visiting this page "+hashtable.get(getIp()) + ". times");
           }
 
         } else if(request.getUri().equals("/s")) {
