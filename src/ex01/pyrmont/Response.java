@@ -54,29 +54,30 @@ public class Response {
   public void sendStaticResource() throws IOException {
 
     try {
+      // 192.168.1.2 is in "balck-list" - will get always Page not found
+      if (!getIp().equals("192.168.1.2")) {
+        System.out.println(  getIp());
 
-      if(request.getUri().equals("/")) {
+        if(request.getUri().equals("/")) {
 
-        //check if uniq, choose appropriate message, store if uniq
-        if (!ips.contains(getIp())) {
-          content("200 OK", 20, "Hello world");
-          ips.add (getIp());
+          //check if uniq, choose appropriate message, store if uniq
+          if (!ips.contains(getIp())) {
+            content("200 OK", 20, "Hello world");
+            ips.add (getIp());
+          } else {
+            content("200 OK", 43, "You have visited this page before!");
+          }
+
+        } else if(request.getUri().equals("/s")) {
+
+          content("200 OK", 28, "Your IP is "+ getIp());
+
         } else {
-          content("200 OK", 43, "You have visited this page before!");
+          //  not found
+          content("404 Page Not Found", 23, "Page Not Found");
         }
-
-        System.out.println(ips.size());
-
-
-      } else if(request.getUri().equals("/s")) {
-
-        content("200 OK", 28, "Your IP is "+ getIp());
-
       } else {
-
-        //  not found
         content("404 Page Not Found", 23, "Page Not Found");
-
       }
     }
     catch (Exception e) {
