@@ -42,6 +42,7 @@ public class Request {
     return null;
   }
 
+  //return uri to use it later to get uri (needed in Response.java)
   public String getUri() {
     return uri;
   }

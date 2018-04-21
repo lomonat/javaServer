@@ -3,11 +3,17 @@ package ex01.pyrmont;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Response {
 
   Request request;
   OutputStream output;
+
+  private static List<String> ips = new ArrayList<String>();
+
 
   public Response(OutputStream output) {
 
@@ -19,44 +25,57 @@ public class Response {
     this.request = request;
   }
 
-  //public String content (header, )
+
+  public String getIp() {
+    InetAddress thisIp = null;
+    try {
+       thisIp = InetAddress.getLocalHost();
+    } catch (Exception e) {
+      System.out.println(e.toString() );
+    }
+    return thisIp.getHostAddress();
+  }
+
+  public void content(String header, int contentLength, String msg ) throws IOException  {
+    System.out.println(msg);
+    String message  = "HTTP/1.1" + header + "\r\n" +
+            "Content-Type: text/html\r\n" +
+            "Content-Length: "+ contentLength + "\r\n" +
+            "\r\n" +
+            "<h1>" + msg + "</h1>";
+    try {
+      output.write(message.getBytes());
+      output.flush();
+    } catch (Exception e) {
+      System.out.println(e.toString());
+    }
+  }
 
   public void sendStaticResource() throws IOException {
 
     try {
 
       if(request.getUri().equals("/")) {
-        System.out.println("Hello world!");
-        String msg  = "HTTP/1.0 200 OK\r\n" +
-                "Content-Type: text/html\r\n" +
-              //  "Content-Length: 20\r\n" +
-                "Content-Length: 20\r\n" +
-                "\r\n" +
-                "<h1>Hello world</h1>";
-        output.write(msg.getBytes());
-        output.flush();
+
+        //check if uniq, choose appropriate message, store if uniq
+        if (!ips.contains(getIp())) {
+          content("200 OK", 20, "Hello world");
+          ips.add (getIp());
+        } else {
+          content("200 OK", 43, "You have visited this page before!");
+        }
+
+        System.out.println(ips.size());
+
 
       } else if(request.getUri().equals("/s")) {
-        InetAddress thisIp = InetAddress.getLocalHost();
-        System.out.println("IP:"+thisIp.getHostAddress());
-        String msg  = "HTTP/1.0 200 OK\r\n" +
-                "Content-Type: text/html\r\n" +
-                "Content-Length: 29\r\n" +
-                "\r\n" +
-                "<h1>Your IP is</h1>" + thisIp.getHostAddress();
-        output.write(msg.getBytes());
-        output.flush();
 
-      }
-      else {
+        content("200 OK", 28, "Your IP is "+ getIp());
+
+      } else {
+
         //  not found
-        String errorMessage = "HTTP/1.1 404 Page Not Found\r\n" +
-          "Content-Type: text/html\r\n" +
-          "Content-Length: 23\r\n" +
-          "\r\n" +
-          "<h1>Page Not Found</h1>";
-        output.write(errorMessage.getBytes());
-        output.flush();
+        content("404 Page Not Found", 23, "Page Not Found");
 
       }
     }
