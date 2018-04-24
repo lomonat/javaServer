@@ -60,7 +60,8 @@ public class Response {
 
       // 192.168.1.2 is in "blacklist" - will get always Page not found
 
-      if (!getIp().equals("192.168.1.2")) {
+      if (!getIp().equals("0")) {
+      //if (!getIp().equals("192.168.1.2")) {
 
         if(request.getUri().equals("/")) {
 
@@ -75,7 +76,12 @@ public class Response {
             // change message every time,
             // if the request from current ip was made before
             hashtable.put(getIp(), hashtable.get(getIp()) + 1);
-            content("200 OK", 43, "You are visiting this page "+hashtable.get(getIp()) + ". times");
+
+            //as we change content for use each time he makes request from the same ip
+            // we want to have dynamically changing contentLength (for correct displaying the content)
+            //basic length - 49 + length of digits
+            int lengthOfDigits = String.valueOf(hashtable.get(getIp())).length();
+            content("200 OK", 49+lengthOfDigits, "You are visiting this page at the "+hashtable.get(getIp()) + ". time");
           }
 
         } else if(request.getUri().equals("/s")) {
